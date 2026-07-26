@@ -15,7 +15,6 @@ export default function DecibelTest() {
       analyserRef.current = audioContextRef.current.createAnalyser();
       const source = audioContextRef.current.createMediaStreamSource(stream);
       source.connect(analyserRef.current);
-      
       setIsTesting(true);
       checkDecibel();
     } catch (e) {
@@ -26,9 +25,7 @@ export default function DecibelTest() {
   const stopTest = () => {
     setIsTesting(false);
     cancelAnimationFrame(reqIdRef.current);
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-    }
+    if (audioContextRef.current) audioContextRef.current.close();
     setCurrentDb(0);
   };
 
@@ -36,45 +33,36 @@ export default function DecibelTest() {
     if (!analyserRef.current) return;
     const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
     analyserRef.current.getByteFrequencyData(dataArray);
-    
     let sum = 0;
     for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-    const avg = sum / dataArray.length;
-    const db = Math.max(0, Math.round((avg / 256) * 100 + 20)); 
+    const db = Math.max(0, Math.round(((sum / dataArray.length) / 256) * 100 + 20)); 
     setCurrentDb(db);
-
     reqIdRef.current = requestAnimationFrame(checkDecibel);
   };
 
+  const isSafe = currentDb < 60;
+
   return (
-    <div className="card" style={{ marginTop: '20px' }}>
-      <p style={{ color: 'var(--text-light)', marginBottom: '30px', fontWeight: '500' }}>
-        현재 마이크로 들어오는 소음의<br/>크기를 확인해 보세요!
+    <div className="card">
+      <p style={{ marginBottom: '40px', fontSize: '18px', fontWeight: '500', color: 'var(--on-surface-variant)' }}>
+        Let's check the room noise.
       </p>
       
-      <div style={{ 
-        width: '150px', height: '150px', 
-        borderRadius: '50%', 
-        background: `conic-gradient(var(--primary-color) ${currentDb}%, #F0F0F0 0)`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        margin: '0 auto 30px',
-        boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)'
-      }}>
-        <div style={{
-          width: '120px', height: '120px',
-          background: 'white', borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexDirection: 'column'
-        }}>
-          <h1 style={{ fontSize: '2.5rem', color: 'var(--text-main)', margin: 0 }}>{currentDb}</h1>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-light)', fontWeight: 'bold' }}>dB</span>
+      <div className={`noise-monitor ${isSafe ? 'safe' : 'warning'}`}>
+        <div className="noise-monitor-content">
+          <h1 style={{ fontSize: '56px', margin: 0 }}>{currentDb}</h1>
+          <span style={{ fontSize: '18px', fontWeight: 700 }}>dB</span>
         </div>
       </div>
 
+      <p style={{ marginBottom: '32px', fontSize: '18px', fontWeight: '700' }}>
+        {currentDb === 0 ? "Ready to listen" : (isSafe ? "Perfectly quiet! ✨" : "A bit loud... 🤫")}
+      </p>
+
       {!isTesting ? (
-        <button className="btn" onClick={startTest}>측정 시작하기</button>
+        <button className="btn" onClick={startTest}>Start Listening</button>
       ) : (
-        <button className="btn stop" onClick={stopTest}>측정 멈추기</button>
+        <button className="btn stop" onClick={stopTest}>Stop</button>
       )}
     </div>
   );

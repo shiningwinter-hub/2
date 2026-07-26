@@ -7,9 +7,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('mission');
 
   const getTitle = () => {
-    if (activeTab === 'test') return '데시벨 테스트 🎙️';
-    if (activeTab === 'mission') return '조용한 친구들 🐰';
-    if (activeTab === 'todo') return '오늘의 할 일 📝';
+    if (activeTab === 'test') return 'Noise Test';
+    if (activeTab === 'mission') return 'Focus Time';
+    if (activeTab === 'todo') return 'Cozy Tasks';
   };
 
   return (
@@ -31,26 +31,14 @@ function App() {
       </div>
 
       <nav className="bottom-nav">
-        <button 
-          className={`nav-item ${activeTab === 'test' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('test')}
-        >
-          <span className="icon">🎙️</span>
-          <span>테스트</span>
+        <button className={`nav-item ${activeTab === 'test' ? 'active' : ''}`} onClick={() => setActiveTab('test')}>
+          <span>🎙️</span><span>Test</span>
         </button>
-        <button 
-          className={`nav-item ${activeTab === 'mission' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('mission')}
-        >
-          <span className="icon">⏱️</span>
-          <span>타이머</span>
+        <button className={`nav-item ${activeTab === 'mission' ? 'active' : ''}`} onClick={() => setActiveTab('mission')}>
+          <span>🐰</span><span>Focus</span>
         </button>
-        <button 
-          className={`nav-item ${activeTab === 'todo' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('todo')}
-        >
-          <span className="icon">📝</span>
-          <span>할 일</span>
+        <button className={`nav-item ${activeTab === 'todo' ? 'active' : ''}`} onClick={() => setActiveTab('todo')}>
+          <span>📝</span><span>Tasks</span>
         </button>
       </nav>
     </div>
